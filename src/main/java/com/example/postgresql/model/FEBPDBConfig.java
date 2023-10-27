@@ -115,35 +115,6 @@ public class FEBPDBConfig {
       jobOperator.setJobRepository(jobRepository);
       jobOperator.setJobRegistry(jobRegistry);
       jobOperator.setJobExplorer(jobExplorer);
-      restart(jobExplorer,jobRepository,jobOperator);
       return jobOperator;
-  }
-  
-  public void restart(@Qualifier("febpBatchJobExplorer") JobExplorer jobExplorer,@Qualifier("febpBatchJobRepository") JobRepository jobRepository, @Qualifier("febpBatchJobOperator") JobOperator jobOperator){
-      try {
-    	  List<String> jobNames=jobExplorer.getJobNames();
-    	  for(String jobName:jobNames)
-    	  {
-    		  List<JobInstance> jobInstances = jobExplorer.getJobInstances(jobName,0,1);// this will get one latest job from the database
-              if(CollectionUtils.isNotEmpty(jobInstances)){
-                 JobInstance jobInstance =  jobInstances.get(0);
-                 List<JobExecution> jobExecutions = jobExplorer.getJobExecutions(jobInstance);
-                 if(CollectionUtils.isNotEmpty(jobExecutions)){
-                     for(JobExecution execution: jobExecutions){
-                         // If the job status is STARTED then update the status to FAILED and restart the job using JobOperator.java
-                         if(execution.getStatus().equals(BatchStatus.STARTED)){ 
-                             execution.setEndTime(LocalDateTime.now());
-                             execution.setStatus(BatchStatus.FAILED);                               
-                             execution.setExitStatus(ExitStatus.FAILED);                               
-                             jobRepository.update(execution);
-                             //jobOperator.restart(execution.getId());
-                         }
-                     }
-                 }
-              }
-          } 
-      }catch (Exception e1) {
-          e1.printStackTrace();
-      }
   }
 }
