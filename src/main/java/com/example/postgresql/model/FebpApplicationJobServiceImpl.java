@@ -93,8 +93,9 @@ public class FebpApplicationJobServiceImpl implements FebpApplicationJobService 
   private BatchStatus triggerApplicationBatchJob(ApplicationJobDataReqDTO applicationJobDataDTO) {
     JobExecution jobExecution = null;
     try {
-      IBatchJobFactory batchJobFactory = (IBatchJobFactory) appContext.getBean(applicationJobDataDTO.getAppJobBeanName());
-      Job appJob = batchJobFactory.getBatchJob("NotUsed", applicationJobDataDTO);
+		Job appJob= (Job)appContext.getBean(applicationJobDataDTO.getAppJobBeanName());
+//      IBatchJobFactory batchJobFactory = (IBatchJobFactory) appContext.getBean(applicationJobDataDTO.getAppJobBeanName());
+//      Job appJob = batchJobFactory.getBatchJob("NotUsed", applicationJobDataDTO);
       if (!jobRegistry.getJobNames().contains(appJob.getName())) {
     	  ReferenceJobFactory referenceJobFactory = new ReferenceJobFactory(appJob);
           jobRegistry.register(referenceJobFactory);
@@ -152,8 +153,6 @@ public class FebpApplicationJobServiceImpl implements FebpApplicationJobService 
     Long failedBatchExecutionId = Long.parseLong(executionId);
     JobOperator jobOperator = (JobOperator) appContext.getBean("febpBatchJobOperator");
     try {
-    	IBatchJobFactory batchJobFactory = (IBatchJobFactory) appContext.getBean(applicationJobDataDTO.getAppJobBeanName());
-        Job appJob = batchJobFactory.getBatchJob("NotUsed", applicationJobDataDTO);
       Long restartId = jobOperator.restart(failedBatchExecutionId);
       String jobRestartSummary = jobOperator.getSummary(failedBatchExecutionId);
       LOGGER.info("SUMMARY AFTER RESTART: " + jobRestartSummary);
@@ -163,10 +162,7 @@ public class FebpApplicationJobServiceImpl implements FebpApplicationJobService 
     } catch (JobInstanceAlreadyCompleteException | NoSuchJobExecutionException | NoSuchJobException | JobRestartException | JobParametersInvalidException e) {
       LOGGER.error("Error while resuming FEBP batch job with execution ID : " + failedBatchExecutionId, e);
 
-    } catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+    }
     return BatchStatus.FAILED;
   }
 }
