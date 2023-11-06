@@ -60,7 +60,7 @@ public class EmployeeTaxCalculationBatchConfig {
     Step step = new StepBuilder("FEBP_EMP_TAX_CALCULATION_STEP", jobRepository)
         .<EmployeeDetail, EmployeeTaxDetail>chunk(5, transactionManager)
         .reader(reader.getPagingItemReader()).processor(itemProcessor).writer(itemWriter).taskExecutor(actStmntTaskExecutor())
-        .throttleLimit(50).build();
+        .build();
 
     Job febpTaxCalculationJob = new JobBuilder("FEBP_EMP_TAX_CALCULATION", jobRepository).incrementer(new RunIdIncrementer()).start(step).build();
     return febpTaxCalculationJob;
@@ -74,7 +74,7 @@ public class EmployeeTaxCalculationBatchConfig {
   @Bean
   public SimpleAsyncTaskExecutor actStmntTaskExecutor() {
     SimpleAsyncTaskExecutor acctStmtTaskExecuter = new SimpleAsyncTaskExecutor();
-    acctStmtTaskExecuter.setConcurrencyLimit(50);
+    acctStmtTaskExecuter.setConcurrencyLimit(10);
     acctStmtTaskExecuter.setThreadPriority(Thread.MAX_PRIORITY);
     acctStmtTaskExecuter.setThreadNamePrefix("FEBP_TAX_CALCULATION_GEN");
     return acctStmtTaskExecuter;
