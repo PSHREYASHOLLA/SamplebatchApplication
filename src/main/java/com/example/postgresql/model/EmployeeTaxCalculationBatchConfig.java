@@ -74,7 +74,7 @@ public class EmployeeTaxCalculationBatchConfig {
   @Bean
   public SimpleAsyncTaskExecutor actStmntTaskExecutor() {
     SimpleAsyncTaskExecutor acctStmtTaskExecuter = new SimpleAsyncTaskExecutor();
-    acctStmtTaskExecuter.setConcurrencyLimit(10);
+    acctStmtTaskExecuter.setConcurrencyLimit(1);
     acctStmtTaskExecuter.setThreadPriority(Thread.MAX_PRIORITY);
     acctStmtTaskExecuter.setThreadNamePrefix("FEBP_TAX_CALCULATION_GEN");
     return acctStmtTaskExecuter;
