@@ -5,17 +5,20 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.Order;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.stereotype.Component;
 /**
  * The Class EmployeeTaxCalculationReader.
  */
-@Component
+
+@Configuration
 public class EmployeeTaxCalculationReader {
 
   /** The febp data source provider. */
@@ -32,12 +35,15 @@ public class EmployeeTaxCalculationReader {
   /** The Constant WHERE_CLAUSE_PARTY. */
   private static final String WHERE_CLAUSE_PARTY = "TAX_CALCULATION_FLAG='Y'";
 
+  
   /**
    * Gets the paging item reader.
    *
    * @return the paging item reader
    * @throws Exception the exception
    */
+  @Bean
+  @StepScope
   public JdbcPagingItemReader<EmployeeDetail> getPagingItemReader() throws Exception {
     JdbcPagingItemReader<EmployeeDetail> reader = new JdbcPagingItemReader<>();
     reader.setDataSource(febpDBSrc);
